@@ -1,0 +1,30 @@
+# Python bytecode / caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+minenv/
+env/
+venv/
+
+# GEE / temp outputs
+outputs/
+*.sqlite
+*.gpkg
+
+# VS Code settings
+.vscode/
+*.code-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Ignore data you don’t want on GitHub
+*.csv
