@@ -22,6 +22,6 @@ def add_indices(img):
     ).rename('BAEI')
 
     ndbi = img.normalizedDifference(['B11','B8']).rename('NDBI')
-    cbi = ndbi.subtract(ndvi).rename('CBI')
+    bu = ndbi.subtract(ndvi).rename('BU')
 
-    return img.addBands([ndvi, mndwi, bsi, baei, cbi])
+    return img.addBands([ndvi, mndwi, bsi, baei, bu])

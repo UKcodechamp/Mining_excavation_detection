@@ -6,7 +6,7 @@ def pit_mask(img, t):
         img.select('NDVI').lt(t['NDVI_MAX'])
         .And(img.select('BSI').gt(t['BSI_MIN']))
         .And(img.select('MNDWI').lt(t['MNDWI_MAX']))
-        .And(img.select('CBI').lt(t['CBI_MAX']))
+        .And(img.select('BU').lt(t['BU_MAX']))
         .And(img.select('BAEI').lt(t['BAEI_MAX']))
     ).rename('pit')
 

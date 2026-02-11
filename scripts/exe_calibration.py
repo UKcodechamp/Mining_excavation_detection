@@ -1,49 +1,90 @@
-import os
 import ee
-import pandas as pd
+import os
+import csv
+
 from src.gee_init import init_gee
 from src.composites import annual_s2_composite
-from src.calibration import compute_index_stats_by_class
+from src.calibration import compute_percentiles, compute_summary_thresholds
+
 from config.settings import *
+from config.thresholds import DEFAULT
+
 
 init_gee(PROJECT_ID)
 
-aoi = ee.FeatureCollection(AOI_asset).geometry()
-ref = ee.FeatureCollection(ref_samples)
+aoi = ee.FeatureCollection(AOI_asset)
 
-rows_class0 = []
-rows_class1 = []
 
-for year in years:
-    img = annual_s2_composite(year, ee.FeatureCollection(AOI_asset).geometry())
-    
-    # Compute stats with 10m buffer
-    stats = compute_index_stats_by_class(img, ref, buffer_m=10)
+ref_samples = ee.FeatureCollection(ref_samples)
 
-    for cls, indices in stats.items():
-        target_list = rows_class0 if cls == 0 else rows_class1
-        for idx, vals in indices.items():
-            target_list.append({
-                "Year": year,
-                "Class": cls,
-                "Index": idx,
-                "Mean": vals["mean"],
-                "StdDev": vals["stdDev"],
-                "Min": vals["min"],
-                "Max": vals["max"],
-                "Median": vals["median"]
-            })
+print("Reference samples loaded.")
 
-# Convert to DataFrames
-df0 = pd.DataFrame(rows_class0)
-df1 = pd.DataFrame(rows_class1)
 
-# Make output folder
-os.makedirs("outputs", exist_ok=True)
+# Compute yearly percentiles
 
-# Save separate CSVs for each class
-df0.to_csv("outputs/index_statistics_class0.csv", index=False)
-df1.to_csv("outputs/index_statistics_class1.csv", index=False)
+percentiles_by_year = compute_percentiles(
+    years,
+    aoi,
+    ref_samples,
+    annual_s2_composite
+)
 
-print("Class 0 stats → outputs/index_statistics_class0.csv")
-print("Class 1 stats → outputs/index_statistics_class1.csv")
+
+# Compute average + conservative(min/max)
+
+average_thresholds, conservative_thresholds = compute_summary_thresholds(
+    percentiles_by_year,
+    years
+)
+
+
+# Prepare output folder
+
+output_folder = "outputs"
+os.makedirs(output_folder, exist_ok=True)
+
+csv_path = os.path.join(output_folder, "index_threshold_statistics.csv")
+
+
+# Export CSV
+
+with open(csv_path, mode="w", newline="") as file:
+    writer = csv.writer(file)
+
+    writer.writerow([
+        "Type", "Year", "Index", "Pit_90", "NonPit_10"
+    ])
+
+    # Yearly values
+    for year in years:
+        for idx, vals in percentiles_by_year[year].items():
+            writer.writerow([
+                "Yearly",
+                year,
+                idx,
+                vals["pit_90"],
+                vals["nonpit_10"]
+            ])
+
+    # Average values
+    for idx, vals in average_thresholds.items():
+        writer.writerow([
+            "Average",
+            "All",
+            idx,
+            vals["pit_90"],
+            vals["nonpit_10"]
+        ])
+
+    # Conservative values
+    for idx, vals in conservative_thresholds.items():
+        writer.writerow([
+            "Conservative(min/max)",
+            "All",
+            idx,
+            vals["pit_90"],
+            vals["nonpit_10"]
+        ])
+
+print(f"\nExport completed successfully.")
+print(f"Saved to: {csv_path}")

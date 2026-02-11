@@ -17,6 +17,6 @@ export_polygons(
     mask,
     aoi,
     min_area_ha,
-    'S2_Pits_AOI1_02',
-    'GEE_threshold'
+    'S2_Pits_AOI1_03',
+    'outputs'
 )
