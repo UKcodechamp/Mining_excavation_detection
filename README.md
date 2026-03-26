@@ -4,7 +4,7 @@ A rule-based remote sensing workflow to detect **sand and gravel pits (exposed s
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 Detecting mining excavations from satellite data is challenging because many land surfaces appear similar to exposed soil, including:
 
@@ -18,7 +18,7 @@ This project introduces a **multi-year persistence-based approach**, where only 
 
 ---
 
-## 🎯 Objective
+##  Objective
 
 The goal is to:
 
@@ -28,7 +28,7 @@ Instead of full time-series analysis, a simplified **3–4 year comparison** is 
 
 ---
 
-## 🗺️ Study Area (AOI)
+##  Study Area (AOI)
 
 * Defined using `AOI.gpkg`
 * Recommended size: **~8–10 km × 8–10 km**
@@ -40,7 +40,7 @@ Instead of full time-series analysis, a simplified **3–4 year comparison** is 
 
 ---
 
-## 📡 Data
+##  Data
 
 * **Source:** Sentinel-2 (Google Earth Engine)
 * **Temporal Coverage:** Typically 3–4 years (e.g., 2022–2025)
@@ -52,46 +52,12 @@ Instead of full time-series analysis, a simplified **3–4 year comparison** is 
 
 ---
 
-## 🧮 Spectral Indices Used
+##  Spectral Indices Used
+<img width="999" height="444" alt="image" src="https://github.com/user-attachments/assets/430a8b80-aac1-413f-9000-4f974eff0d4e" />
 
-### 🌱 NDVI (Vegetation Index)
 
-```
-NDVI = (B8 - B4) / (B8 + B4)
-```
 
-* Low values → little/no vegetation
-* Pits typically have **low NDVI**
-
----
-
-### 💧 NDWI / MNDWI (Water Detection)
-
-```
-NDWI  = (B3 - B8) / (B3 + B8)
-MNDWI = (B3 - B11) / (B3 + B11)
-```
-
-* Used to **exclude water bodies**
-
----
-
-### 🪨 BSI (Bare Soil Index)
-
-```
-BSI = ((B11 + B4) - (B8 + B2)) / ((B11 + B4) + (B8 + B2))
-```
-
-* Highlights **exposed soil**
-* Also sensitive to:
-
-  * Ploughing
-  * Construction
-  * Bright soils
-
----
-
-## 🧠 Methodology
+##  Methodology
 
 ### 1. Annual Feature Extraction
 
@@ -170,20 +136,10 @@ P(x) ≥ 2
   * Remove built-up areas
   * Exclude known industrial zones
 
----
-
-### 7. Attribute Enrichment
-
-Each polygon can include:
-
-* Area
-* Persistence score (P)
-* Mean NDVI
-* Mean BSI
 
 ---
 
-## ✅ Validation
+## Validation
 
 Validation is performed using **orthophotos**:
 
@@ -199,7 +155,7 @@ Validation is performed using **orthophotos**:
 
 ---
 
-### 📊 Metrics:
+###  Metrics:
 
 * Overall Accuracy (OA)
 * Producer Accuracy (PA)
@@ -208,7 +164,7 @@ Validation is performed using **orthophotos**:
 
 ---
 
-### ⚠️ Error Analysis
+###  Error Analysis
 
 Typical errors include:
 
@@ -225,10 +181,24 @@ Typical errors include:
   * Built-up masking
 
 ---
+##  Code Inputs/Outputs
 
-## ⚙️ How to Run
+### Inputs
+* PROJECT_ID = 'transitional-proj'
+* AOI_asset = 'projects/transitional-proj/assets/proj_aoi'
+* ref_samples = 'projects/transitional-proj/assets/valid_samp'
+* years = [2022, 2023, 2024, 2025]
+* persistence = 2
+* min_area_ha = 0.3
+### Outputs
+* Accuracy_table.csv
+* Index_threshold_statistics.csv
+* Detected_pits_polygon_layer.geojson
 
-### 🐍 1. Check Python Version
+
+##  How to Run
+
+###  1. Check Python Version
 
 ```bash
 py -3.11 --version
@@ -236,7 +206,7 @@ py -3.11 --version
 
 ---
 
-### 📦 2. Create Virtual Environment
+###  2. Create Virtual Environment
 
 ```bash
 python -m venv minenv
@@ -244,7 +214,7 @@ python -m venv minenv
 
 ---
 
-### ▶️ 3. Activate Environment (PowerShell)
+###  3. Activate Environment (PowerShell)
 
 ```powershell
 .\minenv\Scripts\Activate.ps1
@@ -252,7 +222,7 @@ python -m venv minenv
 
 ---
 
-### 📥 4. Install Dependencies
+###   4. Install Dependencies
 
 ```bash
 pip install --upgrade pip
@@ -261,7 +231,7 @@ pip install -r requirements.txt
 
 ---
 
-### 🌍 5. Authenticate Google Earth Engine
+###   5. Authenticate Google Earth Engine
 
 ```bash
 earthengine authenticate
@@ -269,7 +239,7 @@ earthengine authenticate
 
 ---
 
-### 🚀 6. Run the Scripts
+###   6. Run the Scripts
 
 ```bash
 python -m scripts.exe_detection
@@ -297,7 +267,7 @@ This project is for academic and research purposes.
 
 ---
 
-## 👩‍💻 Author
+##  Author
 
 **Umara Kazmi**
 MSc Remote Sensing / Geospatial Analysis
